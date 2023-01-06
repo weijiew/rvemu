@@ -1,11 +1,9 @@
 # toyrvemu-rs
 
-## 0. 
-
 ## 1. 环境配置
 
 ```
-❯  cargo new toyrvemu-rs
+❯ cargo new toyrvemu-rs
 ❯ cargo run
 ...
 Hello, world!
@@ -13,14 +11,29 @@ Hello, world!
 
 WSL2 Ubuntu 20.04 
 
-下载 [clang-12](https://github.com/llvm/llvm-project/releases/tag/llvmorg-12.0.0) 解压到 `/usr/local` 路径下。
-
 ```
-cd /usr/local
-sudo tar xvf clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
-sudo mv clang+llvm-12.0.0-x86_64-linux-gnu-ubuntu-20.04 llvm
-export PATH="$PATH:/usr/local/llvm/bin"
+sudo vim /etc/apt/sources.list
 ```
 
-注意不要下错版本，否则无法通过测试！
+
+在源中增加如下内容：
+
+    deb http://apt.llvm.org/focal/ llvm-toolchain-focal main
+    deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal main
+    # 14
+    deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main
+    deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main
+    # 15
+    deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main
+    deb-src http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main
+
+
+```
+sudo apt update
+sudo apt-get install clang-14 lldb-14 lld-14 llvm
+```
+
+比较耗时，大约 1h 。
+
+
 
