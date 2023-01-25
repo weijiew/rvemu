@@ -1,3 +1,8 @@
+use std::env;
+use std::fs::File;
+use std::io;
+use std::io::prelude::*;
+
 
 const RVABI: [&str; 32] = [
     "zero", "ra", "sp", "gp", "tp", "t0", "t1", "t2", 
@@ -6,7 +11,8 @@ const RVABI: [&str; 32] = [
     "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6",
 ];
 
-
+// init memory as 128MB
+pub const DRAM_SIZE: u64 = 1024 * 1024 * 128;
 
 struct Cpu {
     // RISC-V has 32 registers
@@ -16,10 +22,6 @@ struct Cpu {
     // memory, a byte-array. There is no memory in real CPU.
     dram: Vec<u8>,
 }
-
-
-// init memory as 128MB
-pub const DRAM_SIZE: u64 = 1024 * 1024 * 128;
 
 impl Cpu {
     fn new(code: Vec<u8>) -> Self {
@@ -67,7 +69,6 @@ impl Cpu {
         }
     }
 
-
     pub fn dump_registers(&mut self) {
         println!("{:-^80}", "registers");
         let mut output = String::new();
@@ -79,7 +80,7 @@ impl Cpu {
             let i2 = format!("x{}", i + 2);
             let i3 = format!("x{}", i + 3); 
             let line = format!(
-                "{:3}({:^4}) = {:<#18x} {:3}({:^4}) = {:<#18x} {:3}({:^4}) = {:<#18x} {:3}({:^4}) = {:<#18x}\n",
+                "{:3}(🍧{:^4}) = {:<#18x} {:3}(🏳️‍⚧️{:^4}) = {:<#18x} {:3}(🧁{:^4}) = {:<#18x} {:3}(🍼{:^4}) = {:<#18x}\n",
                 i0, RVABI[i], self.regs[i], 
                 i1, RVABI[i + 1], self.regs[i + 1], 
                 i2, RVABI[i + 2], self.regs[i + 2], 
@@ -89,10 +90,31 @@ impl Cpu {
         }
         println!("{}", output);
     }
-
 }
 
 
-fn main() {
-    println!("Hello, world!");
+fn main() -> io::Result<()> {
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() != 2 {
+        println!(
+            "Usage:\n\
+            - cargo run <filename>"
+        );
+        return Ok(());
+    }else {
+        let mut file = File::open(&args[1])?;
+        let mut code = Vec::new();
+        file.read_to_end(&mut code)?;
+
+        let mut cpu = Cpu::new(code);
+        while cpu.pc < cpu.dram.len() as u64 {
+            let inst = cpu.fetch();
+            cpu.execute(inst);
+            cpu.pc += 4;
+        }
+        cpu.dump_registers();
+    
+        Ok(())
+    }
 }
