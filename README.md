@@ -1,6 +1,6 @@
 # toyrvemu-rs
 
-## 1. 环境配置
+## 0. 环境配置
 
 ```
 ❯ cargo new toyrvemu-rs
@@ -35,5 +35,9 @@ sudo apt-get install clang-14 lldb-14 lld-14 llvm
 
 比较耗时，大约 1h 。
 
+
+## 1. 支持 Adder 
+
+- 读取指令并解析，支持 add，addi 两条指令。
 
 
